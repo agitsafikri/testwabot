@@ -10,7 +10,6 @@ echo "Deploying application ..."
 (php artisan down --message 'The app is being (quickly!) updated. Please try again in a minute.') || true
     # Update codebase
     git pull origin master
-    Wabotapi2021
 # Exit maintenance mode
 php artisan up
 
