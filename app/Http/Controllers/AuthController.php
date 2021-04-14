@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use App\Models\User;
+use App\Mail\sendMail;
 use Validator;
 
 
@@ -48,7 +50,7 @@ class AuthController extends Controller
      */
     public function register(Request $request) {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|between:2,100',
+            'full_name' => 'required|string|between:2,100',
             'email' => 'required|string|email|max:100|unique:users',
             'password' => 'required|string|confirmed|min:6',
         ]);
@@ -61,6 +63,15 @@ class AuthController extends Controller
                     $validator->validated(),
                     ['password' => bcrypt($request->password)]
                 ));
+
+        $email = $request->get('email');
+        $data = ([
+         'name' => $request->get('full_name'),
+         'email' => $request->get('email'),
+         'username' => $request->get('username'),
+         'phone' => $request->get('phone'),
+         ]);
+        Mail::to($email)->send(new sendMail($data));
 
         return response()->json([
             'message' => 'User successfully registered',
@@ -112,6 +123,44 @@ class AuthController extends Controller
             'expires_in' => auth()->factory()->getTTL() * 60,
             'user' => auth()->user()
         ]);
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $currentUser = Auth::user();
+        if (User::where('id', $currentUser->id)->exists()){
+            $user = User::find($currentUser->id);
+            $user->full_name = is_null($request->full_name) ? $currentUser->full_name : $request->full_name;
+            $user->phone_number = is_null($request->phone_number) ? $currentUser->phone_number : $request->phone_number;
+            $user->subscription_left = is_null($request->subscription_left) ? $currentUser->subscription_left : $request->subscription_left;
+            $user->save();
+
+            return response()->json([
+              "message" => "records updated successfully",
+              "request full_name" => $request->full_name
+            ], 200);
+        }else {
+            return response()->json([
+              "message" => "user not found"
+            ], 404);
+        }
+    }
+
+    public function deleteProfile(Request $request)
+    {
+        $currentUser = Auth::user();
+        if(User::where('id', $currentUser->id)->exists()) {
+            $user = User::find($currentUser->id);
+            $user->delete();
+
+            return response()->json([
+              "message" => "records deleted"
+            ], 202);
+        }else {
+            return response()->json([
+              "message" => "user not found"
+            ], 404);
+      }
     }
 
 }
