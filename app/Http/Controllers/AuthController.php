@@ -68,8 +68,6 @@ class AuthController extends Controller
         $data = ([
          'name' => $request->get('full_name'),
          'email' => $request->get('email'),
-         'username' => $request->get('username'),
-         'phone' => $request->get('phone'),
          ]);
         Mail::to($email)->send(new sendMail($data));
 
@@ -117,11 +115,17 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     protected function createNewToken($token){
-        return response()->json([
+        $data = ([
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60,
             'user' => auth()->user()
+         ]);
+       
+        return response()->json([
+            'status' => 200,
+            'message' => 'Login success',
+            'data' => $data
         ]);
     }
 
