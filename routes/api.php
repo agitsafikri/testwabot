@@ -24,11 +24,15 @@ Route::group([
 ], function ($router) {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
+    
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/refresh', [AuthController::class, 'refresh']);
-    Route::get('/user-profile', [AuthController::class, 'userProfile']);   
+    Route::get('/user', [AuthController::class, 'userProfile']);   
     Route::post('/createContact', [contactController::class, 'createContact']);
 	Route::post('/createGroup', [contactGroupController::class, 'createGroup']);
+	Route::put('/user', [AuthController::class, 'updateProfile']);
+	Route::delete('/user', [AuthController::class, 'deleteProfile']);
+	
 
 });
 
