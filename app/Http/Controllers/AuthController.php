@@ -65,16 +65,20 @@ class AuthController extends Controller
                 ));
 
         $email = $request->get('email');
+        
         $data = ([
-         'name' => $request->get('full_name'),
+         'full_name' => $request->get('full_name'),
          'email' => $request->get('email'),
+         'user' => $user,
          ]);
+
         Mail::to($email)->send(new sendMail($data));
 
         return response()->json([
+            'status' => 200,
             'message' => 'User successfully registered',
-            'user' => $user
-        ], 201);
+            'data' => $user,
+        ]);
     }
 
 
@@ -104,7 +108,19 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function userProfile() {
-        return response()->json(auth()->user());
+        $checkAuth = auth()->check();
+        if ($checkAuth == false){
+            return response()->json([
+                'status' => 400,
+                'message' => 'Login Error',
+                ]);    
+        }else{
+            return response()->json([
+                'status' => 200,
+                'message' => 'Get data user-profile success',
+                'data' => auth()->user()
+                ]);
+        }
     }
 
     /**
@@ -140,13 +156,15 @@ class AuthController extends Controller
             $user->save();
 
             return response()->json([
-              "message" => "records updated successfully",
-              "request full_name" => $request->full_name
-            ], 200);
-        }else {
+                "status" => 200,
+                "message" => "User Profile updated successfully",
+                "data" => $user
+            ]);
+        }else{
             return response()->json([
-              "message" => "user not found"
-            ], 404);
+                "status" => 404,
+                "message" => "User not found"
+            ]);
         }
     }
 
