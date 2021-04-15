@@ -1,0 +1,21 @@
+name: Laravel
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  laravel-tests:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Deploy to production
+      uses: appleboy/ssh-action@master
+      with:
+          username: "wabotapi"
+          host: "103.226.138.21"
+          password: "Wabotapi2021"
+          script: 'cd /var/www/wabot-api-2021 && ./deploy.sh'
