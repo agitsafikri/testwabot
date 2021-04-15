@@ -24,6 +24,20 @@ class contactController extends Controller
     	$contact->contact_name = $request->contact_name;
     	$contact->save();
 
+        if (! empty($contact->id)) {
+            return response()->json([
+                'status' => 200,
+                'message' => 'Contact successfully inserted',
+                'data' => $contact,
+            ]);
+        }else{
+            return response()->json([
+                'status' => 400,
+                'message' => 'Failed',
+                'data' => $contact,
+            ]);
+        }
+
     	return "OK!";
     }
 }

@@ -31,6 +31,19 @@ class contactGroupController extends Controller
     	$groupContact->id_rule = $request->id_rule;
     	$groupContact->save();
 
-    	return "OK!";
+    	
+        if (! empty($groupContact->id)) {
+            return response()->json([
+                'status' => 200,
+                'message' => 'Group Contact successfully inserted',
+                'data' => $groupContact,
+            ]);
+        }else{
+            return response()->json([
+                'status' => 400,
+                'message' => 'Failed',
+                'data' => $groupContact,
+            ]);
+        }
     }
 }
