@@ -39,12 +39,12 @@ class Handler extends ExceptionHandler
         });
     }
 
-      public function report(Exception $exception)
+      public function report(Throwable $exception)
     {
         parent::report($exception);
     }
 
-    public function render($request, Exception $exception)
+    public function render($request, Throwable $exception)
     {
         return response()->json(
             [
