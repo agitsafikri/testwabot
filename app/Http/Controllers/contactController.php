@@ -53,17 +53,25 @@ class contactController extends Controller
     public function updateContact(Request $request)
     {
         $currentUser = Auth::user();
-        if (contact::where('id_user', $currentUser->id)->exists()){
-            $contact = contact::find($request->id);
-            $contact->contact_name = is_null($request->contact_name) ? $currentUser->contact_name : $request->contact_name;
-            $contact->contact_number = is_null($request->contact_number) ? $currentUser->contact_number : $request->contact_number;
-            $contact->save();
+        if ((contact::where('id_user', $currentUser->id)->count()) > 0){
+            if((contact::where('id', $request->id)->count()) > 0){
+                $contact = contact::find($request->id);
+                $contact->contact_name = is_null($request->contact_name) ? $currentUser->contact_name : $request->contact_name;
+                $contact->contact_number = is_null($request->contact_number) ? $currentUser->contact_number : $request->contact_number;
+                $contact->save();
 
-            return response()->json([
-                "status" => 200,
-                "message" => "Contact updated successfully",
-                "data" => $user
-            ]);
+                return response()->json([
+                    "status" => 200,
+                    "message" => "Contact updated successfully",
+                    "data" => $contact
+                ]);
+            }else{
+                return response()->json([
+                    "status" => 404,
+                    "message" => "Contact not found",
+                ]);
+            }
+            
         }else{
             return response()->json([
                 "status" => 404,
@@ -74,21 +82,31 @@ class contactController extends Controller
 
     public function deleteContact(Request $request)
     {
+
         $currentUser = Auth::user();
-        if(contact::where('id_user', $curretUser->id)->exists()) {
-            if(contact::where('id', $request->id)->exists()){
+        $count = contact::where('id_user', $currentUser->id)->count();
+        if($count > 0) {
+            $countID = contact::where('id', $request->id)->count();
+            if($countID>0){
                 $contact = contact::find($request->id);
                 $contact->delete();                
             
-
                 return response()->json([
-                  "message" => "records deleted"
-                ], 202);
+                    "status" => 200,
+                    "message" => "records deleted",
+                    "data" => $contact,
+                ]);
+            }else{
+                 return response()->json([
+                    "status" => 404,
+                    "message" => "contact not found",
+                ]);
             }
         }else {
             return response()->json([
-              "message" => "user not found"
-            ], 404);
+                "status" => 404,
+                "message" => "user not found",
+            ]);
       }
     }
 }
