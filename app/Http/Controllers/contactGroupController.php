@@ -48,24 +48,33 @@ class contactGroupController extends Controller
     public function getContactGroup(Request $request)
     {
         $currentUser = Auth::user();
-        $data = group_contact::where('id_user', $currentUser->id)->get();
-        foreach ($data as $d) {
-            print_r($d->id_group);
-            $groupName = group::where('id', $d->id_group)->get('group_name');
-            $new[] = ([
-             'id' => $d->id,   
-             'id_user' => $d->id_user,
-             'id_rule' => $d->id_rule,
-             'id_group' => $d->id_group,
-             'group_name' => $groupName,
-             ]);
+        if((group_contact::where('id_user', $currentUser->id)->count()) > 0){
+            $data = group_contact::where('id_user', $currentUser->id)->get();
+            foreach ($data as $d) {
+                print_r($d->id_group);
+                $groupName = group::where('id', $d->id_group)->get('group_name');
+                $new[] = ([
+                 'id' => $d->id,   
+                 'id_user' => $d->id_user,
+                 'id_rule' => $d->id_rule,
+                 'id_group' => $d->id_group,
+                 'group_name' => $groupName,
+                 ]);
 
+            }
+            return response()->json([
+                    'status' => 200,
+                    'message' => 'Success',
+                    'data' => $new,
+                ]);    
+        }else{
+            return response()->json([
+                'status' => 404,
+                'message' => 'Group contact not found',
+                
+            ]);  
         }
-        return response()->json([
-                'status' => 200,
-                'message' => 'Success',
-                'data' => $new,
-            ]);
+        
     }
     public function deleteGroupContact(Request $request)
     {
@@ -92,7 +101,7 @@ class contactGroupController extends Controller
         }else {
             return response()->json([
                 "status" => 404,
-                "message" => "user not found",
+                "message" => "User not found",
             ]);
       }
     }

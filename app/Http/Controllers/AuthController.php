@@ -72,7 +72,7 @@ class AuthController extends Controller
          'user' => $user,
          ]);
 
-        Mail::to($email)->send(new sendMail($data));
+       // Mail::to($email)->send(new sendMail($data));
 
         return response()->json([
             'status' => 200,

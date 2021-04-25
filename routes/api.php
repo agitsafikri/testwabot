@@ -43,7 +43,7 @@ Route::group([
   Route::get('/contactGroup', [contactGroupController::class, 'getContactGroup']);
   Route::delete('/contactGroup', [contactGroupController::class, 'deleteGroupContact']); 
   Route::put('/contactGroup', [contactGroupController::class, 'updateGroupContact']);
-  
+  Route::post('/rule', [treeController::class,'createRule']);  
 });
 
 Route::post('/node', [treeController::class,'createNode']);

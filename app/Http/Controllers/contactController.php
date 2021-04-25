@@ -42,13 +42,22 @@ class contactController extends Controller
     public function getContact(Request $request)
     {
         $currentUser = Auth::user();
-        $data = contact::where('id_user', $currentUser->id)->get();
-
-        return response()->json([
+       
+        if((contact::where('id_user', $currentUser->id)->count()) > 0){
+            $data = contact::where('id_user', $currentUser->id)->get();
+            return response()->json([
                 'status' => 200,
                 'message' => 'Success',
                 'data' => $data,
             ]);
+        }else{
+            return response()->json([
+                'status' => 404,
+                'message' => 'Contact not found',
+                
+            ]);    
+        }
+        
     }
     public function updateContact(Request $request)
     {
