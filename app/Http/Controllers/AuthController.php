@@ -50,7 +50,7 @@ class AuthController extends Controller
      */
     public function register(Request $request) {
         $validator = Validator::make($request->all(), [
-            'full_name' => 'required|string|between:2,100',
+            'name' => 'required|string|between:2,100',
             'email' => 'required|string|email|max:100|unique:users',
             'password' => 'required|string|confirmed|min:6',
         ]);
@@ -67,7 +67,7 @@ class AuthController extends Controller
         $email = $request->get('email');
         
         $data = ([
-         'full_name' => $request->get('full_name'),
+         'name' => $request->get('name'),
          'email' => $request->get('email'),
          'user' => $user,
          ]);
@@ -150,7 +150,7 @@ class AuthController extends Controller
         $currentUser = Auth::user();
         if (User::where('id', $currentUser->id)->exists()){
             $user = User::find($currentUser->id);
-            $user->full_name = is_null($request->full_name) ? $currentUser->full_name : $request->full_name;
+            $user->name = is_null($request->name) ? $currentUser->name : $request->name;
             $user->phone_number = is_null($request->phone_number) ? $currentUser->phone_number : $request->phone_number;
             $user->subscription_left = is_null($request->subscription_left) ? $currentUser->subscription_left : $request->subscription_left;
             $user->save();
